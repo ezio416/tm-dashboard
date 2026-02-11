@@ -6,7 +6,7 @@ interface IDashboardPad
 
 class DashboardPadHost : DashboardThing
 {
-	CInputScriptPad::EPadType m_currentPadType = CInputScriptPad::EPadType(-1);
+	PadType m_currentPadType = PadType::None;
 
 	IDashboardPad@ m_pad = null;
 
@@ -50,6 +50,21 @@ class DashboardPadHost : DashboardThing
 
 	void UpdateAsync() override
 	{
+		// Force a pad type if the settings demand it
+		if (Setting_General_ForcePadType != PadType::None) {
+			SetPad(Setting_General_ForcePadType);
+			return;
+		}
+
+#if FOREVER
+		// Use the most recently used pad from the hook
+		auto lastDevice = ForeverLastInputHook::g_device;
+		if (cast<CInputDeviceDx8Pad>(lastDevice) !is null) {
+			SetPad(PadType::Gamepad);
+		} else {
+			SetPad(PadType::Keyboard);
+		}
+#else
 		// Find the most recently used pad
 		CInputScriptPad@ mostRecentPad;
 
@@ -65,28 +80,32 @@ class DashboardPadHost : DashboardThing
 			}
 		}
 
+		// Clear pad if there is none found
 		if (mostRecentPad is null) {
-			// Clear pad if there is none found
 			ClearPad();
-		} else {
-			// Force a pad type if the settings demand it
-			auto padType = mostRecentPad.Type;
-			switch (Setting_General_ForcePadType) {
-				case ForcePadType::Gamepad: padType = CInputScriptPad::EPadType::XBox; break;
-				case ForcePadType::Keyboard: padType = CInputScriptPad::EPadType::Keyboard; break;
-			}
-
-			SetPad(padType);
+			return;
 		}
+
+		switch (mostRecentPad.Type) {
+			case CInputScriptPad::EPadType::Keyboard:
+				SetPad(PadType::Keyboard);
+				break;
+
+			case CInputScriptPad::EPadType::XBox:
+			case CInputScriptPad::EPadType::PlayStation:
+				SetPad(PadType::Gamepad);
+				break;
+		}
+#endif
 	}
 
 	void ClearPad()
 	{
-		m_currentPadType = CInputScriptPad::EPadType(-1);
+		m_currentPadType = PadType::None;
 		@m_pad = null;
 	}
 
-	void SetPad(CInputScriptPad::EPadType type)
+	void SetPad(PadType type)
 	{
 		if (m_currentPadType == type) {
 			return;
@@ -94,14 +113,8 @@ class DashboardPadHost : DashboardThing
 		m_currentPadType = type;
 
 		switch (type) {
-			case CInputScriptPad::EPadType::Keyboard:
-				@m_pad = DashboardPadKeyboard();
-				break;
-
-			case CInputScriptPad::EPadType::XBox:
-			case CInputScriptPad::EPadType::PlayStation:
-				@m_pad = DashboardPadGamepad();
-				break;
+			case PadType::Keyboard: @m_pad = DashboardPadKeyboard(); break;
+			case PadType::Gamepad: @m_pad = DashboardPadGamepad(); break;
 		}
 	}
 
