@@ -206,10 +206,7 @@ bool Setting_Keyboard_SteerPercentageSymbol = true;
 [Setting category="Keyboard" name="Font"]
 string Setting_Keyboard_Font = "DroidSans.ttf";
 
-[Setting
-	category="Keyboard"
-	name="Font size"
-	min=2 max=40]
+[Setting category="Keyboard" name="Font size" min=2 max=40]
 int Setting_Keyboard_FontSize = 16;
 
 [Setting category="Keyboard" name="Text color" color]
