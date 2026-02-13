@@ -147,7 +147,7 @@ string Setting_Gamepad_Font = "DroidSans.ttf";
 	if="!Setting_Gamepad_Style Cateye"]
 int Setting_Gamepad_FontSize = 16;
 
-[Setting category="Gamepad" name="Text color" color if="!Setting_Gamepad_Style Cateye"]
+[Setting category="Gamepad" name="Text color" color]
 vec4 Setting_Gamepad_TextColor = vec4(1, 1, 1, 1);
 
 
