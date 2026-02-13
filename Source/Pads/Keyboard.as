@@ -118,7 +118,9 @@ class DashboardPadKeyboard : IDashboardPad
 		nvg::Stroke();
 
 		vec4 textColor = Setting_Keyboard_TextColor;
-		textColor.w *= fillAlpha;
+		if (Setting_Gamepad_InactiveAlphaText) {
+			textColor.w *= fillAlpha;
+		}
 
 		nvg::BeginPath();
 		nvg::FontFace(m_font);
