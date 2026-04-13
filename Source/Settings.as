@@ -141,7 +141,7 @@ float Setting_Gamepad_SteerPercentageSpacing = 0.0f;
 string Setting_Gamepad_Font = "DroidSans.ttf";
 
 [Setting category="Gamepad" name="Font size" min=2 max=40]
-int Setting_Gamepad_FontSize = 16;
+int Setting_Gamepad_SteerPercentageSize = 16;  // also used for arrows
 
 [Setting category="Gamepad" name="Text color" color]
 vec4 Setting_Gamepad_TextColor = vec4(1, 1, 1, 1);
